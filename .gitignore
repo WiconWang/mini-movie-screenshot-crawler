@@ -26,6 +26,9 @@ venv/
 # Claude Code 本地配置（harness）
 /.claude/settings.local.json
 
+# CodeGraph 本地索引
+.codegraph/
+
 # 操作系统文件
 .DS_Store
 Thumbs.db
