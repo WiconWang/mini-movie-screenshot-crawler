@@ -1,5 +1,5 @@
 ---
-name: video-crawler
+name: game-storyline-video-crawler
 description: >
   在 bilibili 检索并下载游戏剧情实录视频：分P索引本地缓存、关键词快速查找，
   用户确认后用 yt-dlp（Firefox 登录态）下载最高清晰度原盘，按游戏分类目录归档。
