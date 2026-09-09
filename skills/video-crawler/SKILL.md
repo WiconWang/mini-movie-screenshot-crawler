@@ -47,8 +47,10 @@ python3 scripts/bilibili_video_crawler.py index "<URL或BV号>" [--refresh]
 python3 scripts/bilibili_video_crawler.py search 盛夏 海岛 [--json]
 
 # 下载指定分P最高清晰度，自动归档命名
+# 独立使用：-o downloads；集成 game-storyline-pipeline 管线时输出到统一工作区：
 python3 scripts/bilibili_video_crawler.py download BV1Zp4y187oL -p 157 158 \
-    --game genshin [-o downloads] [--series 目录名]
+    --game genshin -o "$MMM_DATA_ROOT" --series "1.6-盛夏！海岛？大冒险！"
+# 落盘：$MMM_DATA_ROOT/genshin/{--series}/{分P}-{标题}.mp4
 ```
 
 `download` 可选项：
@@ -80,9 +82,9 @@ python3 scripts/bilibili_video_crawler.py download BV1Zp4y187oL -p 157 158 \
 详见 [references/download-spec.md](references/download-spec.md)。核心结构：
 
 ```
-downloads/
+{out_dir}/                            # 独立使用默认 downloads/；管线集成传 -o "$MMM_DATA_ROOT"
 └── genshin/                          # --game 分类目录
-    └── 开局捡到应急食品，然后天下无敌/   # --series 剧集目录（默认=视频标题）
+    └── 1.6-盛夏！海岛？大冒险！        # --series 剧集目录（管线约定 {版本}-{系列名}）
         ├── 157-盛夏！海岛？大冒险！ 其一 ….mp4      # {分P三位序号}-{分P标题}
         ├── 157-….mp4.meta.json                    # 来源与分辨率元数据
         └── …
