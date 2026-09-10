@@ -47,10 +47,14 @@ python3 scripts/bilibili_video_crawler.py index "<URL或BV号>" [--refresh]
 python3 scripts/bilibili_video_crawler.py search 盛夏 海岛 [--json]
 
 # 下载指定分P最高清晰度，自动归档命名
-# 独立使用：-o downloads；集成 game-storyline-pipeline 管线时输出到统一工作区：
+# 独立使用：-o downloads；集成 game-storyline-pipeline 管线时先落暂存，再逐分P登记：
 python3 scripts/bilibili_video_crawler.py download BV1Zp4y187oL -p 157 158 \
-    --game genshin -o "$MMM_DATA_ROOT" --series "1.6-盛夏！海岛？大冒险！"
-# 落盘：$MMM_DATA_ROOT/genshin/{--series}/{分P}-{标题}.mp4
+    --game genshin -o /tmp/video-staging --series "1.6-盛夏！海岛？大冒险！"
+# 落盘：/tmp/video-staging/genshin/{--series}/{分P}-{标题}.mp4（+ 同名 .mp4.meta.json）
+# 登记进统一台账（seg = quest 内剧情序号，非 bilibili 分P号；meta 的 bvid/page/page_title/duration/resolution 进 ledger meta_json，伴生文件不入库）：
+mmm add-asset --game genshin --version 1.6 --slug <quest_slug> \
+    --kind video --seg <N> --src "/tmp/video-staging/genshin/1.6-盛夏！海岛？大冒险！/157-….mp4" \
+    --source-url "https://www.bilibili.com/video/BV1Zp4y187oL?p=157"
 ```
 
 `download` 可选项：
@@ -69,7 +73,7 @@ python3 scripts/bilibili_video_crawler.py download BV1Zp4y187oL -p 157 158 \
    仍未命中：请用户提供具体 URL，不要自行猜测分P号
 4. **预检**：用户确认后运行 `check`，FAIL 项解决前不得下载
 5. **下载**：`download` 所选分P（默认最高清晰度），脚本自动清洗命名并写 meta
-6. **报告**：向用户报告下载清单——文件路径、大小、分辨率、来源 URL
+6. **报告 + 登记**：向用户报告下载清单——文件路径、大小、分辨率、来源 URL；管线集成时按上节 `mmm add-asset --kind video` 逐分P登记（`--seg` 由用户按剧情顺序确认）
 
 ## 索引缓存机制
 
@@ -79,14 +83,14 @@ python3 scripts/bilibili_video_crawler.py download BV1Zp4y187oL -p 157 158 \
 
 ## 存储与命名规范
 
-详见 [references/download-spec.md](references/download-spec.md)。核心结构：
+详见 [references/download-spec.md](references/download-spec.md)。核心结构（暂存形态，登记时 `add-asset` 复制入库并改名 `p{NNN}.mp4`）：
 
 ```
-{out_dir}/                            # 独立使用默认 downloads/；管线集成传 -o "$MMM_DATA_ROOT"
-└── genshin/                          # --game 分类目录
-    └── 1.6-盛夏！海岛？大冒险！        # --series 剧集目录（管线约定 {版本}-{系列名}）
-        ├── 157-盛夏！海岛？大冒险！ 其一 ….mp4      # {分P三位序号}-{分P标题}
-        ├── 157-….mp4.meta.json                    # 来源与分辨率元数据
+{out_dir}/                            # 独立使用默认 downloads/；管线集成用 /tmp 暂存
+└── genshin/                          # --game 分类目录（与统一台账 game code 一致）
+    └── 1.6-盛夏！海岛？大冒险！        # --series 剧集目录（暂存标签，不进台账身份）
+        ├── 157-盛夏！海岛？大冒险！ 其一 ….mp4      # {分P序号}-{分P标题}
+        ├── 157-….mp4.meta.json                    # 来源与分辨率元数据（登记时并入 ledger，不过盘）
         └── …
 ```
 
