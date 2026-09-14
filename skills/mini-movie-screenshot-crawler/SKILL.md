@@ -32,7 +32,9 @@ description: >
    导出登录态（含 SESSDATA），用于解锁高清晰度版本：
    - WSL 环境：自动探测 `/mnt/c/Users/*/AppData/Roaming/Mozilla/Firefox/Profiles/*/cookies.sqlite`
    - 原生 Linux：自动探测 `~/.mozilla/firefox/*/cookies.sqlite`
+   - macOS：自动探测 `~/Library/Application Support/Firefox/Profiles/*/cookies.sqlite`
    - 特殊路径可用环境变量 `FIREFOX_PROFILE_DIR` 指定
+   - 多个 profile 命中时取 `cookies.sqlite` mtime 最新的一个
 
 ## 四种模式
 
@@ -99,4 +101,6 @@ mmm add-asset --game genshin --version 1.6 --slug <quest_slug> \
 - `.cache/cookies.txt` 含账号登录态：已 gitignore，勿提交、勿外传，用完可删
 - 最高清晰度受账号权限限制（当前账号为大会员）；源视频本身未提供的分辨率无法获得
 - 视频体积大（单集约 0.3~1.6GB）：批量下载前向用户确认磁盘空间（`check` 会显示剩余空间）
-- 运行环境为 WSL/Linux，脚本为纯 Python 标准库实现，无第三方依赖
+- 脚本为纯 Python 标准库实现，无第三方依赖；运行环境支持 Linux / macOS / WSL
+- `check` 中「无 SESSDATA」判 FAIL 偏严：未登录仍可下载 1080P29（仅 1080P60 需大会员）。
+  仅当分P确实拿不到需要的清晰度时才需登录

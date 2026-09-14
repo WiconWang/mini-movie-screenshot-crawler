@@ -70,6 +70,8 @@ def find_cookies_db():
         patterns.append(os.path.join(env_dir, "cookies.sqlite"))
     patterns += [
         os.path.expanduser("~/.mozilla/firefox/*/cookies.sqlite"),           # 原生 Linux
+        os.path.expanduser(                                                   # macOS
+            "~/Library/Application Support/Firefox/Profiles/*/cookies.sqlite"),
         "/mnt/c/Users/*/AppData/Roaming/Mozilla/Firefox/Profiles/*/cookies.sqlite",  # WSL 读 Windows 侧
     ]
     cands = []
@@ -89,7 +91,10 @@ def export_cookies(force=False):
     src = find_cookies_db()
     if not src:
         die("未找到 Firefox cookies.sqlite；请确认已安装 Firefox 并登录 bilibili，"
-            "或用环境变量 FIREFOX_PROFILE_DIR 指定 profile 目录")
+            "或用环境变量 FIREFOX_PROFILE_DIR 指定 profile 目录。\n"
+            "      已探测：$FIREFOX_PROFILE_DIR、~/.mozilla/firefox/*/（Linux）、"
+            "~/Library/Application Support/Firefox/Profiles/*/（macOS）、"
+            "/mnt/c/Users/*/AppData/...（WSL）")
     if time.time() - os.path.getmtime(src) > 30 * 24 * 3600:
         print("[WARN] cookies.sqlite 已超过 30 天未更新，登录态可能过期", file=sys.stderr)
 
