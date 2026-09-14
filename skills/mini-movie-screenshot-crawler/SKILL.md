@@ -1,11 +1,11 @@
 ---
-name: game-storyline-video-crawler
+name: mini-movie-screenshot-crawler
 description: >
   在 bilibili 检索并下载游戏剧情实录视频：分P索引本地缓存、关键词快速查找，
   用户确认后用 yt-dlp（Firefox 登录态）下载最高清晰度原盘，按游戏分类目录归档。
   当前已收录游戏：原神（基准实录 BV1Zp4y187oL）。
   触发词：下载视频、剧情实录、bilibili下载、BV号、分P下载、盛夏海岛大冒险、
-  最高清晰度下载、video-crawler。
+  最高清晰度下载、mini-movie-screenshot-crawler。
 ---
 
 # 视频采集器
